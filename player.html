@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+
+body{
+    margin:0;
+    padding:40px;
+    background:transparent;
+    color:#fff;
+    font-family:Georgia,"Times New Roman",serif;
+}
+
+.player{
+    width:100%;
+    border-top:1px solid rgba(255,255,255,.25);
+    border-bottom:1px solid rgba(255,255,255,.25);
+    padding:28px 0;
+}
+
+.title{
+    font-size:34px;
+    line-height:1.2;
+    margin-bottom:24px;
+}
+
+.controls{
+    display:flex;
+    align-items:center;
+    gap:20px;
+}
+
+button{
+    background:none;
+    border:none;
+    color:white;
+    cursor:pointer;
+    font-size:17px;
+    font-family:Arial,sans-serif;
+    font-weight:600;
+    padding:0;
+}
+
+.wave{
+    flex:1;
+    height:34px;
+    display:flex;
+    gap:5px;
+    cursor:pointer;
+}
+
+.bar{
+    flex:1;
+    border-radius:999px;
+    background:rgba(255,255,255,.22);
+}
+
+.bar:nth-child(1){height:10px;margin-top:12px;}
+.bar:nth-child(2){height:18px;margin-top:8px;}
+.bar:nth-child(3){height:28px;margin-top:3px;}
+.bar:nth-child(4){height:14px;margin-top:10px;}
+.bar:nth-child(5){height:32px;}
+.bar:nth-child(6){height:20px;margin-top:7px;}
+
+.active{
+    background:white;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="player">
+
+<div class="title">
+Escucha el testimonio de Matías Muñoz
+</div>
+
+<div class="controls">
+
+<button id="play">
+▶ Escuchar
+</button>
+
+<div class="wave" id="wave"></div>
+
+</div>
+
+<audio id="audio" preload="metadata">
+<source src="https://raw.githubusercontent.com/aravenaynz-hue/reportaje-multimedia/main/Cu%C3%B1a%20Matias%20inestabilidad%20laboral.mp3" type="audio/mpeg">
+</audio>
+
+</div>
+
+<script>
+
+const wave=document.getElementById("wave");
+
+for(let i=0;i<48;i++){
+
+const bar=document.createElement("div");
+
+bar.className="bar";
+
+wave.appendChild(bar);
+
+}
+
+const bars=document.querySelectorAll(".bar");
+
+const audio=document.getElementById("audio");
+
+const play=document.getElementById("play");
+
+play.onclick=function(){
+
+if(audio.paused){
+
+audio.play();
+
+play.innerHTML="❚❚ Pausar";
+
+}else{
+
+audio.pause();
+
+play.innerHTML="▶ Escuchar";
+
+}
+
+}
+
+audio.addEventListener("timeupdate",()=>{
+
+if(!audio.duration)return;
+
+const p=audio.currentTime/audio.duration;
+
+bars.forEach((b,i)=>{
+
+b.classList.toggle("active",i<bars.length*p);
+
+});
+
+});
+
+wave.onclick=function(e){
+
+if(audio.duration){
+
+const rect=this.getBoundingClientRect();
+
+const percent=(e.clientX-rect.left)/rect.width;
+
+audio.currentTime=audio.duration*percent;
+
+}
+
+audio.play();
+
+play.innerHTML="❚❚ Pausar";
+
+}
+
+audio.onended=function(){
+
+play.innerHTML="▶ Escuchar";
+
+bars.forEach(b=>b.classList.remove("active"));
+
+}
+
+</script>
+
+</body>
+</html>
