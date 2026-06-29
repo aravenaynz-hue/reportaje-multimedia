@@ -3,103 +3,91 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Testimonio Matías Muñoz</title>
 
 <style>
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-}
+*{margin:0;padding:0;box-sizing:border-box;}
 
 body{
-background:transparent;
+background:#000;
 font-family:Georgia, serif;
 color:#fff;
-padding:25px;
+padding:35px 38px;
 }
 
 .player{
 display:flex;
 align-items:center;
-gap:22px;
+gap:32px;
 width:100%;
 }
 
 button{
-width:70px;
-height:70px;
+width:105px;
+height:105px;
 border-radius:50%;
-border:2px solid #fff;
+border:3px solid #fff;
 background:none;
 color:#fff;
-font-size:28px;
+font-size:42px;
 cursor:pointer;
 flex-shrink:0;
 }
 
 .info{
 flex:1;
+width:100%;
 }
 
 h2{
-font-size:30px;
+font-size:44px;
 font-weight:normal;
 line-height:1.3;
-margin-bottom:18px;
-color:white;
-}
-
-audio{
-display:none;
+margin-bottom:28px;
+color:#fff;
 }
 
 .wave{
 display:flex;
 align-items:flex-end;
-gap:4px;
-height:45px;
+gap:7px;
+height:58px;
+width:100%;
 }
 
 .wave span{
-width:5px;
-background:white;
+flex:1;
+max-width:8px;
+background:#fff;
 border-radius:10px;
-animation:wave 1s ease-in-out infinite;
 }
 
-.wave span:nth-child(1){height:15px;}
-.wave span:nth-child(2){height:35px;}
-.wave span:nth-child(3){height:22px;}
-.wave span:nth-child(4){height:42px;}
-.wave span:nth-child(5){height:18px;}
-.wave span:nth-child(6){height:30px;}
-.wave span:nth-child(7){height:40px;}
-.wave span:nth-child(8){height:20px;}
-.wave span:nth-child(9){height:38px;}
-.wave span:nth-child(10){height:24px;}
-.wave span:nth-child(11){height:34px;}
-.wave span:nth-child(12){height:18px;}
-.wave span:nth-child(13){height:42px;}
-.wave span:nth-child(14){height:26px;}
-.wave span:nth-child(15){height:36px;}
+.wave span:nth-child(odd){height:26px;}
+.wave span:nth-child(even){height:48px;}
+.wave span:nth-child(3n){height:36px;}
+.wave span:nth-child(5n){height:56px;}
+
+.playing .wave span{
+animation:wave 0.8s ease-in-out infinite;
+}
+
+.playing .wave span:nth-child(even){
+animation-delay:.2s;
+}
 
 @keyframes wave{
-0%,100%{transform:scaleY(.6);}
-50%{transform:scaleY(1);}
+0%,100%{transform:scaleY(.5);}
+50%{transform:scaleY(1.2);}
 }
 </style>
 </head>
 
 <body>
 
-<div class="player">
-
+<div class="player" id="player">
 <button id="play">▶</button>
 
 <div class="info">
-
 <h2>
 Escucha el testimonio de Matías Muñoz<br>
 y conoce cómo la inestabilidad laboral afecta a quienes investigan en Chile.
@@ -109,37 +97,40 @@ y conoce cómo la inestabilidad laboral afecta a quienes investigan en Chile.
 <span></span><span></span><span></span><span></span><span></span>
 <span></span><span></span><span></span><span></span><span></span>
 <span></span><span></span><span></span><span></span><span></span>
+<span></span><span></span><span></span><span></span><span></span>
+<span></span><span></span><span></span><span></span><span></span>
+<span></span><span></span><span></span><span></span><span></span>
+<span></span><span></span><span></span><span></span><span></span>
+<span></span><span></span><span></span><span></span><span></span>
+</div>
+</div>
 </div>
 
-</div>
-
-</div>
-
-<audio id="audio">
-<source src="https://raw.githubusercontent.com/aravenaynz-hue/reportaje-multimedia/main/Cu%C3%B1a%20Matias%20inestabilidad%20laboral.mp3" type="audio/mpeg">
+<audio id="audio" preload="auto">
+<source src="https://github.com/aravenaynz-hue/reportaje-multimedia/raw/refs/heads/main/Cun%CC%83a%20Matias%20inestabilidad%20laboral.mp3" type="audio/mpeg">
 </audio>
 
 <script>
+const audio = document.getElementById("audio");
+const btn = document.getElementById("play");
+const player = document.getElementById("player");
 
-const audio=document.getElementById("audio");
-const btn=document.getElementById("play");
+btn.onclick = () => {
+  if (audio.paused) {
+    audio.play();
+    btn.innerHTML = "❚❚";
+    player.classList.add("playing");
+  } else {
+    audio.pause();
+    btn.innerHTML = "▶";
+    player.classList.remove("playing");
+  }
+};
 
-btn.onclick=()=>{
-
-if(audio.paused){
-audio.play();
-btn.innerHTML="❚❚";
-}else{
-audio.pause();
-btn.innerHTML="▶";
-}
-
-}
-
-audio.onended=()=>{
-btn.innerHTML="▶";
-}
-
+audio.onended = () => {
+  btn.innerHTML = "▶";
+  player.classList.remove("playing");
+};
 </script>
 
 </body>
