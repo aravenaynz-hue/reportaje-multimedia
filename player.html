@@ -6,12 +6,7 @@
 <title>Testimonio Matías Muñoz</title>
 
 <style>
-
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-}
+*{margin:0;padding:0;box-sizing:border-box;}
 
 body{
 background:transparent;
@@ -43,11 +38,6 @@ display:flex;
 align-items:center;
 justify-content:center;
 padding-left:3px;
-transition:.2s;
-}
-
-button:hover{
-background:rgba(255,255,255,.08);
 }
 
 .info{
@@ -65,37 +55,33 @@ color:#fff;
 
 .wave{
 width:100%;
-height:28px;
+height:42px;
 display:flex;
 align-items:flex-end;
-gap:3px;
+gap:4px;
 }
 
 .wave span{
 flex:1;
-background:white;
+background:#fff;
 border-radius:20px;
 opacity:.95;
+min-width:3px;
 }
 
-.wave span:nth-child(6n+1){height:8px;}
-.wave span:nth-child(6n+2){height:18px;}
-.wave span:nth-child(6n+3){height:28px;}
-.wave span:nth-child(6n+4){height:14px;}
-.wave span:nth-child(6n+5){height:24px;}
-.wave span:nth-child(6n+6){height:10px;}
+.wave span:nth-child(6n+1){height:12px;}
+.wave span:nth-child(6n+2){height:26px;}
+.wave span:nth-child(6n+3){height:42px;}
+.wave span:nth-child(6n+4){height:20px;}
+.wave span:nth-child(6n+5){height:34px;}
+.wave span:nth-child(6n+6){height:16px;}
 
 .playing .wave span{
 animation:wave .8s ease-in-out infinite;
 }
 
-.playing .wave span:nth-child(even){
-animation-delay:.15s;
-}
-
-.playing .wave span:nth-child(3n){
-animation-delay:.3s;
-}
+.playing .wave span:nth-child(even){animation-delay:.15s;}
+.playing .wave span:nth-child(3n){animation-delay:.3s;}
 
 @keyframes wave{
 0%,100%{transform:scaleY(.6);}
@@ -103,45 +89,27 @@ animation-delay:.3s;
 }
 
 @media(max-width:700px){
-
-.player{
-gap:14px;
+.player{gap:14px;}
+button{width:48px;height:48px;font-size:18px;}
+.text{font-size:19px;}
+.wave{height:34px;}
+.wave span:nth-child(6n+3){height:34px;}
 }
-
-button{
-width:48px;
-height:48px;
-font-size:18px;
-}
-
-.text{
-font-size:19px;
-}
-
-.wave{
-height:22px;
-}
-
-}
-
 </style>
 </head>
 
 <body>
 
 <div class="player" id="player">
-
 <button id="play">▶</button>
 
 <div class="info">
-
 <div class="text">
 Escucha el testimonio de Matías Muñoz y conoce<br>
 cómo la inestabilidad laboral afecta a quienes investigan en Chile.
 </div>
 
 <div class="wave">
-
 <span></span><span></span><span></span><span></span><span></span><span></span>
 <span></span><span></span><span></span><span></span><span></span><span></span>
 <span></span><span></span><span></span><span></span><span></span><span></span>
@@ -150,11 +118,8 @@ cómo la inestabilidad laboral afecta a quienes investigan en Chile.
 <span></span><span></span><span></span><span></span><span></span><span></span>
 <span></span><span></span><span></span><span></span><span></span><span></span>
 <span></span><span></span><span></span><span></span><span></span><span></span>
-
 </div>
-
 </div>
-
 </div>
 
 <audio id="audio" preload="auto">
@@ -162,39 +127,29 @@ cómo la inestabilidad laboral afecta a quienes investigan en Chile.
 </audio>
 
 <script>
-
 const audio=document.getElementById("audio");
 const btn=document.getElementById("play");
 const player=document.getElementById("player");
 
 btn.onclick=()=>{
-
 if(audio.paused){
-
 audio.play();
 btn.innerHTML="❚❚";
 btn.style.paddingLeft="0";
 player.classList.add("playing");
-
 }else{
-
 audio.pause();
 btn.innerHTML="▶";
 btn.style.paddingLeft="3px";
 player.classList.remove("playing");
-
 }
-
-}
+};
 
 audio.onended=()=>{
-
 btn.innerHTML="▶";
 btn.style.paddingLeft="3px";
 player.classList.remove("playing");
-
-}
-
+};
 </script>
 
 </body>
