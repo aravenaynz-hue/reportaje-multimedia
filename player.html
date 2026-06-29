@@ -9,114 +9,89 @@
 *{margin:0;padding:0;box-sizing:border-box;}
 
 body{
-background:#000;
-font-family:Georgia, serif;
-color:#fff;
-padding:32px 38px;
+  background:transparent;
+  font-family:Georgia, "Times New Roman", serif;
+  color:white;
+  padding:10px 0;
 }
 
 .player{
-display:flex;
-align-items:center;
-gap:30px;
-width:100%;
+  width:100%;
+  max-width:980px;
+  margin:0 auto;
+  display:flex;
+  align-items:center;
+  gap:20px;
 }
 
 button{
-width:88px;
-height:88px;
-border-radius:50%;
-border:2.5px solid #fff;
-background:transparent;
-color:#fff;
-font-size:34px;
-cursor:pointer;
-flex-shrink:0;
-display:flex;
-align-items:center;
-justify-content:center;
-transition:all .25s ease;
-}
-
-button:hover{
-transform:scale(1.04);
-background:rgba(255,255,255,.08);
+  width:62px;
+  height:62px;
+  border-radius:50%;
+  border:2px solid white;
+  background:transparent;
+  color:white;
+  font-size:25px;
+  cursor:pointer;
+  flex-shrink:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding-left:3px;
 }
 
 .info{
-flex:1;
-width:100%;
+  flex:1;
+  min-width:0;
 }
 
-h2{
-font-size:38px;
-font-weight:normal;
-line-height:1.28;
-margin-bottom:24px;
-color:#fff;
-letter-spacing:-0.3px;
+.text{
+  font-size:28px;
+  line-height:1.25;
+  margin-bottom:13px;
+  color:white;
 }
 
 .wave{
-display:flex;
-align-items:flex-end;
-gap:5px;
-height:54px;
-width:100%;
+  width:100%;
+  height:34px;
+  display:flex;
+  align-items:center;
+  gap:3px;
 }
 
 .wave span{
-flex:1;
-background:#fff;
-border-radius:10px;
-opacity:.95;
+  flex:1;
+  height:14px;
+  background:white;
+  border-radius:20px;
+  opacity:.95;
 }
 
-.wave span:nth-child(1){height:18px;}
-.wave span:nth-child(2){height:31px;}
-.wave span:nth-child(3){height:44px;}
-.wave span:nth-child(4){height:24px;}
-.wave span:nth-child(5){height:50px;}
-.wave span:nth-child(6){height:33px;}
-.wave span:nth-child(7){height:20px;}
-.wave span:nth-child(8){height:46px;}
-.wave span:nth-child(9){height:28px;}
-.wave span:nth-child(10){height:52px;}
-
-.wave span:nth-child(10n+1){height:18px;}
-.wave span:nth-child(10n+2){height:31px;}
-.wave span:nth-child(10n+3){height:44px;}
-.wave span:nth-child(10n+4){height:24px;}
-.wave span:nth-child(10n+5){height:50px;}
-.wave span:nth-child(10n+6){height:33px;}
-.wave span:nth-child(10n+7){height:20px;}
-.wave span:nth-child(10n+8){height:46px;}
-.wave span:nth-child(10n+9){height:28px;}
-.wave span:nth-child(10n+10){height:52px;}
+.wave span:nth-child(6n+1){height:10px;}
+.wave span:nth-child(6n+2){height:20px;}
+.wave span:nth-child(6n+3){height:30px;}
+.wave span:nth-child(6n+4){height:16px;}
+.wave span:nth-child(6n+5){height:26px;}
+.wave span:nth-child(6n+6){height:12px;}
 
 .playing .wave span{
-animation:wave 0.85s ease-in-out infinite;
+  animation:wave .85s ease-in-out infinite;
 }
 
-.playing .wave span:nth-child(even){
-animation-delay:.18s;
-}
-
-.playing .wave span:nth-child(3n){
-animation-delay:.32s;
-}
+.playing .wave span:nth-child(even){animation-delay:.15s;}
+.playing .wave span:nth-child(3n){animation-delay:.3s;}
 
 @keyframes wave{
-0%,100%{transform:scaleY(.55);}
-50%{transform:scaleY(1.15);}
+  0%,100%{transform:scaleY(.55);}
+  50%{transform:scaleY(1.15);}
 }
 
 @media(max-width:700px){
-body{padding:24px;}
-.player{gap:18px;}
-button{width:68px;height:68px;font-size:28px;}
-h2{font-size:25px;}
-.wave{height:42px;gap:3px;}
+  .player{gap:14px;}
+  button{width:52px;height:52px;font-size:21px;}
+  .text{font-size:21px;}
+  .wave{height:28px;}
 }
 </style>
 </head>
@@ -124,31 +99,29 @@ h2{font-size:25px;}
 <body>
 
 <div class="player" id="player">
-<button id="play" aria-label="Reproducir audio">▶</button>
+  <button id="play" aria-label="Reproducir audio">▶</button>
 
-<div class="info">
-<h2>
-Escucha el testimonio de Matías Muñoz<br>
-y conoce cómo la inestabilidad laboral afecta a quienes investigan en Chile.
-</h2>
+  <div class="info">
+    <div class="text">
+      Escucha el testimonio de Matías Muñoz y conoce<br>
+      cómo la inestabilidad laboral afecta a quienes investigan en Chile.
+    </div>
 
-<div class="wave">
-<span></span><span></span><span></span><span></span><span></span>
-<span></span><span></span><span></span><span></span><span></span>
-<span></span><span></span><span></span><span></span><span></span>
-<span></span><span></span><span></span><span></span><span></span>
-<span></span><span></span><span></span><span></span><span></span>
-<span></span><span></span><span></span><span></span><span></span>
-<span></span><span></span><span></span><span></span><span></span>
-<span></span><span></span><span></span><span></span><span></span>
-<span></span><span></span><span></span><span></span><span></span>
-<span></span><span></span><span></span><span></span><span></span>
-</div>
-</div>
+    <div class="wave">
+      <span></span><span></span><span></span><span></span><span></span><span></span>
+      <span></span><span></span><span></span><span></span><span></span><span></span>
+      <span></span><span></span><span></span><span></span><span></span><span></span>
+      <span></span><span></span><span></span><span></span><span></span><span></span>
+      <span></span><span></span><span></span><span></span><span></span><span></span>
+      <span></span><span></span><span></span><span></span><span></span><span></span>
+      <span></span><span></span><span></span><span></span><span></span><span></span>
+      <span></span><span></span><span></span><span></span><span></span><span></span>
+    </div>
+  </div>
 </div>
 
 <audio id="audio" preload="auto">
-<source src="https://github.com/aravenaynz-hue/reportaje-multimedia/raw/refs/heads/main/Cun%CC%83a%20Matias%20inestabilidad%20laboral.mp3" type="audio/mpeg">
+  <source src="https://github.com/aravenaynz-hue/reportaje-multimedia/raw/refs/heads/main/Cun%CC%83a%20Matias%20inestabilidad%20laboral.mp3" type="audio/mpeg">
 </audio>
 
 <script>
@@ -160,16 +133,19 @@ btn.onclick = () => {
   if (audio.paused) {
     audio.play();
     btn.innerHTML = "❚❚";
+    btn.style.paddingLeft = "0";
     player.classList.add("playing");
   } else {
     audio.pause();
     btn.innerHTML = "▶";
+    btn.style.paddingLeft = "3px";
     player.classList.remove("playing");
   }
 };
 
 audio.onended = () => {
   btn.innerHTML = "▶";
+  btn.style.paddingLeft = "3px";
   player.classList.remove("playing");
 };
 </script>
