@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>¿Vale la pena investigar en Chile?</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0b0b0b;min-height:100vh;font-family:Georgia,'Times New Roman',serif}
+.root{background:#0b0b0b;font-family:Georgia,'Times New Roman',serif;min-height:100vh;position:relative;overflow:hidden}
+canvas#atm{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+
+/* ── HERO ── */
+.hero{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:3.5rem 2rem 2.5rem;text-align:center;min-height:100vh;transition:opacity .45s,transform .45s}
+.hero h1{font-size:clamp(1.6rem,4vw,2.6rem);color:#e8e4db;font-weight:normal;line-height:1.25;margin-bottom:1rem}
+.hero .sub{font-size:clamp(.85rem,2vw,1rem);color:#a7a7a7;font-style:italic;margin-bottom:1.1rem;line-height:1.6;max-width:560px}
+.hero .context{font-size:.86rem;color:#c4c4c4;line-height:1.75;max-width:620px;margin-bottom:2.35rem}
+.hero .context strong{color:#e8e4db;font-weight:normal;font-style:italic}
+.opts{display:flex;flex-direction:column;gap:.65rem;width:100%;max-width:540px}
+.opt{background:rgba(255,255,255,.03);border:1px solid #252525;border-radius:3px;padding:1rem 1.4rem;cursor:pointer;text-align:left;color:#b0aca4;font-family:Georgia,'Times New Roman',serif;font-size:.97rem;font-style:italic;transition:border-color .25s,background .25s,color .25s;display:flex;align-items:center;gap:.75rem}
+.opt-arrow{color:#5b9bd5;font-style:normal;font-size:1.05rem;transition:transform .25s;flex-shrink:0}
+.opt:hover{background:rgba(91,155,213,.06);border-color:#5b9bd5;color:#e8e4db}
+.opt:hover .opt-arrow{transform:translateX(4px)}
+
+/* ── CHARTS ── */
+.charts-view{position:relative;z-index:2;padding:2.5rem 1.75rem 3rem;max-width:820px;margin:0 auto;opacity:0;transform:translateY(18px);transition:opacity .5s,transform .5s;pointer-events:none;min-height:100vh}
+.charts-view.visible{opacity:1;transform:translateY(0);pointer-events:all}
+.back-btn{background:none;border:none;color:#5b9bd5;font-family:Georgia,'Times New Roman',serif;font-size:.75rem;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;padding:0 0 .2rem;border-bottom:1px solid #5b9bd525;margin-bottom:2.25rem;display:inline-block;transition:color .2s}
+.back-btn:hover{color:#8dc0e8}
+.profile-eyebrow{font-size:.68rem;letter-spacing:.15em;text-transform:uppercase;margin-bottom:.35rem}
+.profile-title{font-size:clamp(1.1rem,2.5vw,1.45rem);color:#e8e4db;font-weight:normal;font-style:italic;margin-bottom:.3rem;line-height:1.35}
+.profile-sub{font-size:.78rem;color:#9b9b9b;margin-bottom:2.25rem;letter-spacing:.03em}
+
+.chart-block{margin-bottom:1.75rem}
+.chart-header{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:.6rem}
+.chart-label{font-size:.85rem;color:#b4b4b4;font-style:italic}
+.chart-val{font-size:1.12rem;color:#e8e4db;letter-spacing:.02em}
+.bar-track{background:#141414;border-radius:2px;height:13px;overflow:hidden;position:relative}
+.bar-fill{height:100%;border-radius:2px;width:0%;transition:width .85s cubic-bezier(.4,0,.2,1)}
+.bar-ghost{position:absolute;top:0;left:0;height:100%;border-radius:2px;opacity:0;transition:width .85s cubic-bezier(.4,0,.2,1) .1s,opacity .4s .1s}
+.scale{display:flex;justify-content:space-between;margin-top:.4rem;font-size:.63rem;color:#7f7f7f;letter-spacing:.04em}
+
+
+.analysis{border-left:3px solid #5b9bd5;padding:1.1rem 1.1rem 1.1rem 1.4rem;margin-top:1.75rem;transition:border-color .4s;border-radius:0}
+.a-h{font-size:.97rem;color:#c2beb5;line-height:1.75;margin-bottom:.6rem;font-style:italic}
+.a-b{font-size:.84rem;line-height:1.9;color:#c0c0c0}
+.a-b strong{color:#c2beb5;font-weight:normal;font-style:italic}
+
+.stat-row{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-top:1.75rem}
+.stat-card{background:#0f0f0f;border:1px solid #1a1a1a;border-radius:3px;padding:.9rem 1rem}
+.stat-card .s-label{font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;color:#909090;margin-bottom:.4rem}
+.stat-card .s-val{font-size:1.1rem;color:#e8e4db;letter-spacing:.02em}
+.stat-card .s-note{font-size:.7rem;color:#8f8f8f;margin-top:.25rem;font-style:italic}
+
+.divider{border:none;border-top:1px solid #141414;margin:1.75rem 0}
+.footnotes{font-size:.67rem;color:#8d8d8d;line-height:1.8}
+.footnotes p{margin-bottom:.1rem}
+
+@media(max-width:500px){
+  .hero{padding:2.5rem 1.25rem 2rem}
+  .charts-view{padding:2rem 1.1rem 2.5rem}
+  .opt{font-size:.88rem;padding:.9rem 1rem}
+  .stat-row{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="root">
+  <canvas id="atm"></canvas>
+
+  <div class="hero" id="hero">
+    <h1>¿Vale la pena<br>investigar en Chile?</h1>
+    <p class="sub">Después de hasta 14 años de formación, ¿la investigación científica ofrece ingresos y estabilidad laboral acordes con ese esfuerzo?</p>
+    <p class="context">Esta visualización compara <strong>años de formación</strong>, <strong>ingresos mensuales estimados</strong> y <strong>condiciones laborales</strong> entre la investigación científica y dos profesiones del área de la salud. Selecciona un perfil para ver los datos.</p>
+    <div class="opts">
+      <button class="opt" data-target="investigador"><span class="opt-arrow">→</span> Ver investigador científico</button>
+      <button class="opt" data-target="fono"><span class="opt-arrow">→</span> Comparar con fonoaudiología</button>
+      <button class="opt" data-target="enfermeria"><span class="opt-arrow">→</span> Comparar con enfermería privada</button>
+    </div>
+  </div>
+
+  <div class="charts-view" id="charts-view">
+    <button class="back-btn" id="back-btn">← Volver</button>
+    <p class="profile-eyebrow" id="profile-eyebrow"></p>
+    <p class="profile-title" id="profile-title"></p>
+    <p class="profile-sub" id="profile-sub"></p>
+<div class="chart-block">
+      <div class="chart-header">
+        <span class="chart-label">Años de formación académica</span>
+        <span class="chart-val" id="val-años">—</span>
+      </div>
+      <div class="bar-track">
+        <div class="bar-fill" id="bar-años"></div>
+      </div>
+      <div class="scale"><span>0</span><span>4</span><span>8</span><span>12</span><span>16</span><span>20 años</span></div>
+    </div>
+
+    <div class="chart-block">
+      <div class="chart-header">
+        <span class="chart-label" id="ingreso-label">Ingreso mensual estimado</span>
+        <span class="chart-val" id="val-ingreso">—</span>
+      </div>
+      <div class="bar-track">
+        <div class="bar-fill" id="bar-ingreso"></div>
+        <div class="bar-ghost" id="bar-ghost"></div>
+      </div>
+      <div class="scale"><span>$0</span><span>$700k</span><span>$1,4M</span><span>$2,1M</span><span>$2,8M</span></div>
+    </div>
+
+    <div class="stat-row" id="stat-row"></div>
+
+    <div class="analysis" id="analysis">
+      <p class="a-h" id="a-h"></p>
+      <p class="a-b" id="a-b"></p>
+    </div>
+
+    <hr class="divider">
+    <div class="footnotes">
+      <p>¹ Remuneraciones mensuales según <em>Indeed Chile</em>, promedios 2023–2025.</p>
+      <p>² Años de formación: incluyen pregrado, magíster y/o doctorado según perfil. Cifras referenciales.</p>
+      <p>³ Datos de inestabilidad laboral: encuesta ANIP + Redes Chilenas de Investigadores, 2017 (n=744).</p>
+    </div>
+  </div>
+</div>
+
+<script>
+const MAX_I = 2800000;
+const MAX_A = 20;
+
+const DATA = {
+  fono: {
+    color: '#5b9bd5',
+    eyebrow: 'Comparación · Área de la Salud',
+    title: 'Fonoaudiólogo',
+    sub: 'Pregrado universitario + habilitación profesional',
+    años: 5, vA: '5 años',
+    ingreso: 2600000, vI: '$2.600.000 / mes',
+    ingresoLabel: 'Ingreso mensual estimado',
+    warn: false,
+    stats: [
+      {label:'Ingreso mensual', val:'$2.600.000', note:'Promedio Indeed 2023–2025'},
+      {label:'Ingreso anual est.', val:'$31.200.000', note:'12 remuneraciones'}
+    ],
+    h: 'Este perfil sirve como punto de comparación para dimensionar la brecha entre formación e ingresos frente a la investigación científica.',
+    b: 'Con un pregrado de cinco años y habilitación profesional, el fonoaudiólogo accede a un mercado laboral estable con ingresos que promedian los <strong>$2.600.000 mensuales</strong>, según datos de Indeed 2023–2025. La relación entre años de formación y remuneración es notablemente más favorable que en el caso del investigador científico.'
+  },
+  enfermeria: {
+    color: '#5b9bd5',
+    eyebrow: 'Comparación · Área de la Salud',
+    title: 'Enfermera/o (sector privado)',
+    sub: 'Pregrado universitario + habilitación profesional',
+    años: 5, vA: '5 años',
+    ingreso: 2300000, vI: '$2.300.000 / mes',
+    ingresoLabel: 'Ingreso mensual estimado',
+    warn: false,
+    stats: [
+      {label:'Ingreso mensual', val:'$2.300.000', note:'Promedio Indeed 2023–2025'},
+      {label:'Ingreso anual est.', val:'$27.600.000', note:'12 remuneraciones'}
+    ],
+    h: 'Este perfil muestra otra referencia del área de la salud para comparar años de estudio, salario y estabilidad con la carrera investigativa.',
+    b: 'Un/a enfermero/a en el sector privado percibe en promedio <strong>$2.300.000 mensuales</strong>. Con cinco años de formación universitaria, accede a condiciones laborales más estables que la mayoría de los investigadores, quienes pese a tener formaciones de posgrado más extensas reciben ingresos significativamente menores.'
+  },
+  investigador: {
+    color: '#c84b4b',
+    eyebrow: 'Perfil central · Investigación Científica',
+    title: 'Investigador/a científico/a',
+    sub: 'Pregrado + magíster y/o doctorado (10–16 años)',
+    años: 14, vA: '~14 años',
+    ingreso: 1100000, vI: '$1.100.000 / mes',
+    ingresoLabel: 'Ingreso mensual estimado',
+    warn: false,
+    stats: [
+      {label:'Ingreso mensual', val:'$1.100.000', note:'Promedio Indeed 2023–2025'},
+      {label:'Trabaja a honorarios', val:'32%', note:'Encuesta ANIP 2017, n=744'},
+      {label:'Sin contrato indefinido', val:'80,8%', note:'Solo 19,2% tiene contrato fijo'},
+      {label:'Sin empleo al encuestar', val:'23,3%', note:'~12% buscaba sin éxito'}
+    ],
+    h: 'Este es el perfil central de la visualización: una carrera de alta formación, pero marcada por menores ingresos e inestabilidad laboral.',
+    b: 'Con entre 10 y 16 años de formación entre pregrado, magíster y doctorado, el investigador científico general percibe apenas <strong>$1.100.000 mensuales</strong> en promedio —menos de la mitad que un fonoaudiólogo o enfermero. A esto se suma una marcada inestabilidad: solo el <strong>19,2%</strong> tiene contrato indefinido, un tercio trabaja a honorarios y el desempleo en el sector duplicaba el promedio nacional al momento de la encuesta.'
+  }
+};
+
+const hero = document.getElementById('hero');
+const chartsView = document.getElementById('charts-view');
+chartsView.style.display = 'none';
+
+function showCharts(id) {
+  const p = DATA[id];
+  document.getElementById('profile-eyebrow').textContent = p.eyebrow;
+  document.getElementById('profile-eyebrow').style.color = p.color;
+  document.getElementById('profile-title').textContent = p.title;
+  document.getElementById('profile-sub').textContent = p.sub;
+  document.getElementById('ingreso-label').textContent = p.ingresoLabel;
+  document.getElementById('val-años').textContent = p.vA;
+  document.getElementById('val-ingreso').textContent = p.vI;
+  document.getElementById('analysis').style.borderColor = p.color;
+  document.getElementById('a-h').textContent = p.h;
+  document.getElementById('a-b').innerHTML = p.b;
+
+  const statsEl = document.getElementById('stat-row');
+  statsEl.innerHTML = p.stats.map(s => `
+    <div class="stat-card">
+      <div class="s-label">${s.label}</div>
+      <div class="s-val">${s.val}</div>
+      <div class="s-note">${s.note}</div>
+    </div>`).join('');
+
+  const bA = document.getElementById('bar-años');
+  const bI = document.getElementById('bar-ingreso');
+  const bG = document.getElementById('bar-ghost');
+  bA.style.background = p.color; bA.style.width = '0%';
+  bI.style.background = p.color; bI.style.width = '0%';
+  bG.style.opacity = '0'; bG.style.width = '0%';
+
+  hero.style.opacity = '0'; hero.style.transform = 'translateY(-12px)';
+  setTimeout(() => {
+    hero.style.display = 'none';
+    chartsView.style.display = 'block';
+    requestAnimationFrame(() => {
+      chartsView.classList.add('visible');
+      requestAnimationFrame(() => {
+        bA.style.width = (p.años / MAX_A * 100) + '%';
+          bI.style.width = (p.ingreso / MAX_I * 100) + '%';
+      });
+    });
+  }, 380);
+}
+
+function showHero() {
+  chartsView.classList.remove('visible');
+  setTimeout(() => {
+    chartsView.style.display = 'none';
+    hero.style.display = 'flex';
+    hero.style.opacity = '0'; hero.style.transform = 'translateY(12px)';
+    requestAnimationFrame(() => { hero.style.opacity = '1'; hero.style.transform = 'translateY(0)'; });
+  }, 380);
+}
+
+document.querySelectorAll('.opt').forEach(o => o.addEventListener('click', () => showCharts(o.dataset.target)));
+document.getElementById('back-btn').addEventListener('click', showHero);
+
+/* ── Átomos ── */
+const canvas = document.getElementById('atm');
+const ctx = canvas.getContext('2d');
+let W, H, atoms = [];
+const BLUE = 'rgba(91,155,213,';
+
+function mkAtom() {
+  const rx = 28 + Math.random() * 38;
+  const ry = rx * (0.35 + Math.random() * 0.3);
+  const orbits = Math.floor(2 + Math.random() * 2);
+  const electrons = [];
+  for (let i = 0; i < orbits; i++) {
+    const tilt = (Math.PI / orbits) * i + Math.random() * 0.3;
+    const eCount = 1 + Math.floor(Math.random() * 2);
+    for (let e = 0; e < eCount; e++) {
+      electrons.push({
+        tilt, angle: (Math.PI * 2 / eCount) * e,
+        speed: (0.012 + Math.random() * 0.014) * (Math.random() < .5 ? 1 : -1),
+        rx, ry
+      });
+    }
+  }
+  return {
+    x: Math.random() * W, y: Math.random() * H,
+    vx: (Math.random() - .5) * 0.22, vy: (Math.random() - .5) * 0.22,
+    nucleusR: 2.2 + Math.random() * 1.8,
+    alpha: 0.12 + Math.random() * 0.14,
+    electrons
+  };
+}
+
+function resize() {
+  W = canvas.width = canvas.offsetWidth;
+  H = canvas.height = canvas.offsetHeight || window.innerHeight;
+  atoms = [];
+  const count = Math.max(5, Math.floor(W * H / 22000));
+  for (let i = 0; i < count; i++) atoms.push(mkAtom());
+}
+
+function drawAtom(a) {
+  const al = a.alpha;
+  ctx.save(); ctx.translate(a.x, a.y);
+  a.electrons.forEach(e => {
+    e.angle += e.speed;
+    ctx.save(); ctx.rotate(e.tilt);
+    ctx.beginPath(); ctx.ellipse(0, 0, e.rx, e.ry, 0, 0, Math.PI * 2);
+    ctx.strokeStyle = BLUE + (al * 0.55) + ')'; ctx.lineWidth = 0.7; ctx.stroke();
+    const ex = Math.cos(e.angle) * e.rx, ey = Math.sin(e.angle) * e.ry;
+    ctx.beginPath(); ctx.arc(ex, ey, 1.6, 0, Math.PI * 2);
+    ctx.fillStyle = BLUE + (al * 1.6) + ')'; ctx.fill();
+    ctx.restore();
+  });
+  ctx.beginPath(); ctx.arc(0, 0, a.nucleusR, 0, Math.PI * 2);
+  ctx.fillStyle = BLUE + (al * 1.8) + ')'; ctx.fill();
+  ctx.restore();
+  a.x += a.vx; a.y += a.vy;
+  if (a.x < -60) a.x = W + 60; if (a.x > W + 60) a.x = -60;
+  if (a.y < -60) a.y = H + 60; if (a.y > H + 60) a.y = -60;
+}
+
+function loop() {
+  ctx.clearRect(0, 0, W, H);
+  atoms.forEach(drawAtom);
+  requestAnimationFrame(loop);
+}
+
+window.addEventListener('resize', resize);
+resize(); loop();
+</script>
+</body>
+</html>
