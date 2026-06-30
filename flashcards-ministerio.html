@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lo que dijo el Ministerio</title>
+<style>
+  :root{
+    --bg:#0a0a0a;
+    --blue:#5b9bd5;
+    --blue-dim: rgba(91,155,213,0.25);
+    --text:#e8e6e1;
+    --muted:#9a9a96;
+  }
+  *{box-sizing:border-box;}
+  html,body{
+    margin:0; padding:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family: Georgia, 'Times New Roman', serif;
+    overflow-x:hidden;
+  }
+  .wrap{
+    position:relative;
+    min-height:100vh;
+    padding:64px 24px 90px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+  }
+
+  #bgcanvas{
+    position:fixed;
+    top:0; left:0;
+    width:100%; height:100%;
+    z-index:0;
+    opacity:0.55;
+  }
+
+  .header{
+    position:relative;
+    z-index:2;
+    text-align:center;
+    max-width:680px;
+    margin-bottom:60px;
+  }
+  .kicker{
+    text-transform:uppercase;
+    letter-spacing:3px;
+    font-size:11px;
+    color:var(--blue);
+    margin-bottom:14px;
+  }
+  .header h1{
+    font-size:clamp(24px,4vw,36px);
+    font-weight:400;
+    line-height:1.3;
+    margin:0 0 16px;
+    color:#f4f3f0;
+  }
+  .header p{
+    font-size:14px;
+    line-height:1.7;
+    color:var(--muted);
+    font-style:italic;
+  }
+
+  .grid{
+    position:relative;
+    z-index:2;
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(290px,1fr));
+    gap:36px;
+    width:100%;
+    max-width:1100px;
+  }
+
+  .card-scene{
+    position:relative;
+    perspective:1800px;
+    height:480px;
+    opacity:0;
+    transform:translateY(28px);
+    transition:opacity 0.9s ease, transform 0.9s cubic-bezier(.22,.61,.36,1);
+  }
+  .card-scene.visible{
+    opacity:1;
+    transform:translateY(0);
+  }
+
+  .tilt{
+    width:100%;
+    height:100%;
+    transform-style:preserve-3d;
+    transition:transform 0.5s ease;
+    will-change:transform;
+  }
+
+  .card-scene::after{
+    content:'';
+    position:absolute;
+    inset:-12px;
+    border-radius:4px;
+    box-shadow:0 0 0 0 rgba(91,155,213,0);
+    pointer-events:none;
+    z-index:-1;
+  }
+  .card-scene.is-flipping::after{
+    animation:flipGlow 1.3s ease;
+  }
+  @keyframes flipGlow{
+    0%{ box-shadow:0 0 0 0 rgba(91,155,213,0); }
+    45%{ box-shadow:0 0 46px 4px rgba(91,155,213,0.28); }
+    100%{ box-shadow:0 0 0 0 rgba(91,155,213,0); }
+  }
+
+  .card{
+    position:relative;
+    width:100%;
+    height:100%;
+    transform-style:preserve-3d;
+    transition:transform 1.3s cubic-bezier(.45,.05,.15,1.02);
+    cursor:pointer;
+  }
+  .card.flipped{
+    transform:rotateY(180deg);
+  }
+
+  .face{
+    position:absolute;
+    inset:0;
+    backface-visibility:hidden;
+    border:1px solid rgba(91,155,213,0.18);
+    border-radius:1px;
+    padding:0;
+    display:flex;
+    flex-direction:column;
+    background:
+      linear-gradient(180deg, rgba(255,255,255,0.018), rgba(255,255,255,0) 40%),
+      var(--bg);
+    transition:box-shadow 0.5s ease, border-color 0.5s ease, transform 0.5s ease;
+  }
+
+  .face::before{
+    content:'';
+    position:absolute;
+    top:0; left:0; right:0;
+    height:3px;
+    background:linear-gradient(90deg, var(--blue), transparent 75%);
+    opacity:0.7;
+  }
+  .doc-meta{
+    position:absolute;
+    top:14px; right:18px;
+    font-size:9px;
+    letter-spacing:1.5px;
+    color:rgba(154,154,150,0.55);
+    font-family: 'Courier New', monospace;
+  }
+
+  .card-scene:hover .face.front{
+    border-color:rgba(91,155,213,0.45);
+    box-shadow:0 0 32px var(--blue-dim);
+    transform:translateY(-3px);
+  }
+
+  .face.front{
+    justify-content:space-between;
+    padding:36px 30px 28px;
+  }
+  .face.back{
+    transform:rotateY(180deg);
+    justify-content:flex-start;
+    overflow-y:auto;
+    padding:34px 30px;
+  }
+
+  .index{
+    font-size:11px;
+    letter-spacing:2px;
+    color:var(--blue);
+    text-transform:uppercase;
+    margin-bottom:auto;
+    padding-bottom:18px;
+    border-bottom:1px solid rgba(91,155,213,0.15);
+  }
+  .quote-mark{
+    font-size:58px;
+    color:var(--blue);
+    opacity:0.32;
+    line-height:0.5;
+    margin-bottom:10px;
+    margin-top:22px;
+  }
+  .front-text{
+    font-size:19px;
+    line-height:1.55;
+    color:#f4f3f0;
+    margin-bottom:auto;
+    font-style:italic;
+  }
+  .hint{
+    margin-top:26px;
+    font-size:11.5px;
+    color:var(--muted);
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-style:italic;
+  }
+  .hint .arrow{
+    color:var(--blue);
+    font-style:normal;
+    transition:transform 0.3s ease;
+  }
+  .card-scene:hover .hint .arrow{
+    transform:translateX(4px);
+  }
+  .hint::after{
+    content:'';
+    flex:1;
+    height:1px;
+    background:linear-gradient(90deg, rgba(91,155,213,0.35), transparent);
+  }
+
+  .back-block{
+    margin-bottom:22px;
+    position:relative;
+  }
+  .back-block:last-child{
+    margin-bottom:0;
+  }
+
+  .back-block.question .back-label{ color:var(--muted); }
+  .back-block.question .back-text{
+    font-size:14.5px;
+    font-style:italic;
+    color:#cfcdc7;
+  }
+
+  .back-block.response{
+    background:linear-gradient(180deg, rgba(91,155,213,0.07), rgba(91,155,213,0.01));
+    border-left:2px solid var(--blue);
+    padding:14px 16px;
+    border-radius:0 2px 2px 0;
+  }
+  .back-block.response .back-label{ color:var(--blue); }
+  .back-block.response .back-text{
+    font-size:14.5px;
+    line-height:1.65;
+    color:var(--text);
+  }
+
+  .back-block.gap .back-label{ color:#8a8a86; }
+  .back-block.gap .back-text{
+    font-size:13px;
+    line-height:1.6;
+    color:var(--muted);
+    font-style:italic;
+  }
+
+  .back-label{
+    font-size:9.5px;
+    letter-spacing:2.2px;
+    text-transform:uppercase;
+    margin-bottom:8px;
+    font-weight:bold;
+    display:flex;
+    align-items:center;
+    gap:6px;
+  }
+  .back-label .dot{
+    width:5px; height:5px;
+    border-radius:50%;
+    display:inline-block;
+    background:currentColor;
+  }
+
+  .face.back::-webkit-scrollbar{width:4px;}
+  .face.back::-webkit-scrollbar-thumb{background:rgba(91,155,213,0.3);}
+
+  @media (max-width:600px){
+    .card-scene{height:520px;}
+  }
+</style>
+</head>
+<body>
+
+<canvas id="bgcanvas"></canvas>
+
+<div class="wrap">
+
+  <div class="header">
+    <div class="kicker">Análisis &middot; Documento oficial</div>
+    <h1>Lo consultado<br>y lo respondido</h1>
+    <p>Tres preguntas formales fueron enviadas al Ministerio de Ciencia. A continuación, el contraste entre cada consulta y el contenido del comunicado recibido.</p>
+  </div>
+
+  <div class="grid">
+
+    <div class="card-scene">
+      <div class="tilt">
+      <div class="card" data-card="1">
+        <div class="face front">
+          <div class="doc-meta">EXP. 01/03</div>
+          <div class="index">01 — Becas en el extranjero</div>
+          <div>
+            <div class="quote-mark">&ldquo;</div>
+            <div class="front-text">Evaluando distintos instrumentos y mecanismos de financiamiento</div>
+          </div>
+          <div class="hint">Comparar con el comunicado <span class="arrow">&rarr;</span></div>
+        </div>
+        <div class="face back">
+          <div class="doc-meta">EXP. 01/03</div>
+          <div class="back-block question">
+            <div class="back-label"><span class="dot"></span>Pregunta realizada</div>
+            <div class="back-text">¿Cuáles son las razones detrás de la reducción de las becas para estudios en el extranjero?</div>
+          </div>
+          <div class="back-block response">
+            <div class="back-label"><span class="dot"></span>Respuesta del Ministerio</div>
+            <div class="back-text">El comunicado señala que se encuentra "evaluando distintos instrumentos y mecanismos de financiamiento" para fortalecer el sistema científico de manera sostenible.</div>
+          </div>
+          <div class="back-block gap">
+            <div class="back-label"><span class="dot"></span>Información no abordada</div>
+            <div class="back-text">El comunicado no incluye montos, plazos ni el criterio asociado a la variación del financiamiento de las becas en el extranjero entre 2023 y 2026.</div>
+          </div>
+        </div>
+      </div>
+      </div>
+    </div>
+
+    <div class="card-scene">
+      <div class="tilt">
+      <div class="card" data-card="2">
+        <div class="face front">
+          <div class="doc-meta">EXP. 02/03</div>
+          <div class="index">02 — Estándares internacionales</div>
+          <div>
+            <div class="quote-mark">&ldquo;</div>
+            <div class="front-text">Fortalecer el sistema científico nacional de manera sostenible</div>
+          </div>
+          <div class="hint">Comparar con el comunicado <span class="arrow">&rarr;</span></div>
+        </div>
+        <div class="face back">
+          <div class="doc-meta">EXP. 02/03</div>
+          <div class="back-block question">
+            <div class="back-label"><span class="dot"></span>Pregunta realizada</div>
+            <div class="back-text">¿Qué estrategias existen para mantener los estándares internacionales de formación científica sin el respaldo de las becas en el extranjero?</div>
+          </div>
+          <div class="back-block response">
+            <div class="back-label"><span class="dot"></span>Respuesta del Ministerio</div>
+            <div class="back-text">El comunicado menciona, en términos generales, la importancia de "la formación de capital humano avanzado" y "la colaboración internacional".</div>
+          </div>
+          <div class="back-block gap">
+            <div class="back-label"><span class="dot"></span>Información no abordada</div>
+            <div class="back-text">El comunicado no detalla programas, convenios o mecanismos específicos vinculados a la formación científica en el extranjero.</div>
+          </div>
+        </div>
+      </div>
+      </div>
+    </div>
+
+    <div class="card-scene">
+      <div class="tilt">
+      <div class="card" data-card="3">
+        <div class="face front">
+          <div class="doc-meta">EXP. 03/03</div>
+          <div class="index">03 — Brecha con otras áreas</div>
+          <div>
+            <div class="quote-mark">&ldquo;</div>
+            <div class="front-text">Modernizar herramientas existentes</div>
+          </div>
+          <div class="hint">Comparar con el comunicado <span class="arrow">&rarr;</span></div>
+        </div>
+        <div class="face back">
+          <div class="doc-meta">EXP. 03/03</div>
+          <div class="back-block question">
+            <div class="back-label"><span class="dot"></span>Pregunta realizada</div>
+            <div class="back-text">¿A qué se debe la histórica brecha de financiamiento de la ciencia frente a áreas estratégicas como la salud?</div>
+          </div>
+          <div class="back-block response">
+            <div class="back-label"><span class="dot"></span>Respuesta del Ministerio</div>
+            <div class="back-text">El comunicado indica que "cualquier ajuste o revisión busca modernizar herramientas existentes" para que los recursos públicos respondan a los "desafíos científicos, tecnológicos y productivos del país".</div>
+          </div>
+          <div class="back-block gap">
+            <div class="back-label"><span class="dot"></span>Información no abordada</div>
+            <div class="back-text">El comunicado no incluye cifras comparativas de inversión entre sectores ni referencias a la diferencia histórica de financiamiento respecto a áreas como salud.</div>
+          </div>
+        </div>
+      </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll('.card').forEach(card=>{
+    card.addEventListener('click', ()=>{
+      card.classList.toggle('flipped');
+      const scene = card.closest('.card-scene');
+      scene.classList.remove('is-flipping');
+      void scene.offsetWidth; // reinicia la animación si se repite
+      scene.classList.add('is-flipping');
+      setTimeout(()=> scene.classList.remove('is-flipping'), 1300);
+    });
+  });
+
+  // Paralaje muy sutil (2-3°) al mover el cursor sobre cada tarjeta
+  document.querySelectorAll('.card-scene').forEach(scene=>{
+    const tilt = scene.querySelector('.tilt');
+    scene.addEventListener('mousemove', (e)=>{
+      const rect = scene.getBoundingClientRect();
+      const px = (e.clientX - rect.left)/rect.width - 0.5;
+      const py = (e.clientY - rect.top)/rect.height - 0.5;
+      const max = 2.5;
+      tilt.style.transform = `rotateY(${px*max}deg) rotateX(${-py*max}deg)`;
+    });
+    scene.addEventListener('mouseleave', ()=>{
+      tilt.style.transform = 'rotateY(0deg) rotateX(0deg)';
+    });
+  });
+
+  const scenes = document.querySelectorAll('.card-scene');
+  const observer = new IntersectionObserver((entries)=>{
+    entries.forEach((entry)=>{
+      if(entry.isIntersecting){
+        const idx = Array.from(scenes).indexOf(entry.target);
+        setTimeout(()=>{
+          entry.target.classList.add('visible');
+        }, idx*140);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold:0.15 });
+  scenes.forEach(s=>observer.observe(s));
+
+  const canvas = document.getElementById('bgcanvas');
+  const ctx = canvas.getContext('2d');
+  let w,h;
+  function resize(){
+    w = canvas.width = window.innerWidth;
+    h = canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  // Punto de influencia del cursor cuando está sobre una tarjeta
+  let hoverPoint = null;
+  document.querySelectorAll('.card-scene').forEach(scene=>{
+    scene.addEventListener('mousemove', (e)=>{
+      hoverPoint = { x: e.clientX, y: e.clientY };
+    });
+    scene.addEventListener('mouseleave', ()=>{
+      hoverPoint = null;
+    });
+  });
+
+  function rand(min,max){ return Math.random()*(max-min)+min; }
+
+  const molecules = [];
+  const NUM_MOLECULES = 9;
+  const FREE_ATOMS = 14;
+
+  for(let m=0; m<NUM_MOLECULES; m++){
+    const cx = rand(0,w), cy = rand(0,h);
+    const atomCount = Math.floor(rand(3,6));
+    const atoms = [];
+    for(let a=0; a<atomCount; a++){
+      const angle = (Math.PI*2/atomCount)*a + rand(-0.3,0.3);
+      const dist = rand(14,34);
+      atoms.push({
+        ox: Math.cos(angle)*dist,
+        oy: Math.sin(angle)*dist,
+        r: rand(1.4,3.2)
+      });
+    }
+    molecules.push({
+      x: cx, y: cy,
+      vx: rand(-0.07,0.07),
+      vy: rand(-0.07,0.07),
+      rot: rand(0,Math.PI*2),
+      vrot: rand(-0.0025,0.0025),
+      atoms: atoms
+    });
+  }
+
+  const freeAtoms = [];
+  for(let i=0;i<FREE_ATOMS;i++){
+    freeAtoms.push({
+      x: rand(0,w), y: rand(0,h),
+      vx: rand(-0.12,0.12), vy: rand(-0.12,0.12),
+      r: rand(0.8,1.6)
+    });
+  }
+
+  function step(){
+    ctx.clearRect(0,0,w,h);
+
+    molecules.forEach(mol=>{
+      mol.x += mol.vx; mol.y += mol.vy;
+      mol.rot += mol.vrot;
+      if(mol.x< -50) mol.x = w+50;
+      if(mol.x> w+50) mol.x = -50;
+      if(mol.y< -50) mol.y = h+50;
+      if(mol.y> h+50) mol.y = -50;
+
+      let driftX = 0, driftY = 0;
+      if(hoverPoint){
+        const dx = mol.x - hoverPoint.x;
+        const dy = mol.y - hoverPoint.y;
+        const dist = Math.sqrt(dx*dx+dy*dy);
+        if(dist < 180 && dist > 0.1){
+          const force = (1 - dist/180) * 6;
+          driftX = (dx/dist) * force;
+          driftY = (dy/dist) * force;
+        }
+      }
+
+      const cx = mol.x + driftX, cy = mol.y + driftY;
+      const positions = mol.atoms.map(a=>{
+        const cos = Math.cos(mol.rot), sin = Math.sin(mol.rot);
+        return {
+          x: cx + a.ox*cos - a.oy*sin,
+          y: cy + a.ox*sin + a.oy*cos,
+          r: a.r
+        };
+      });
+
+      const glow = hoverPoint ? Math.min(0.18 + Math.abs(driftX+driftY)*0.01, 0.34) : 0.22;
+      ctx.strokeStyle = `rgba(91,155,213,${glow})`;
+      ctx.lineWidth = 1;
+      positions.forEach((p,i)=>{
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.lineTo(p.x, p.y);
+        ctx.stroke();
+        const next = positions[(i+1)%positions.length];
+        ctx.beginPath();
+        ctx.moveTo(p.x,p.y);
+        ctx.lineTo(next.x,next.y);
+        ctx.stroke();
+      });
+
+      ctx.beginPath();
+      ctx.arc(cx, cy, 2, 0, Math.PI*2);
+      ctx.fillStyle = 'rgba(91,155,213,0.4)';
+      ctx.fill();
+
+      positions.forEach(p=>{
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+        ctx.fillStyle = 'rgba(91,155,213,0.6)';
+        ctx.fill();
+      });
+    });
+
+    freeAtoms.forEach(n=>{
+      n.x += n.vx; n.y += n.vy;
+      if(n.x<0||n.x>w) n.vx*=-1;
+      if(n.y<0||n.y>h) n.vy*=-1;
+    });
+    for(let i=0;i<freeAtoms.length;i++){
+      for(let j=i+1;j<freeAtoms.length;j++){
+        const a=freeAtoms[i], b=freeAtoms[j];
+        const dx=a.x-b.x, dy=a.y-b.y;
+        const dist=Math.sqrt(dx*dx+dy*dy);
+        if(dist<120){
+          ctx.strokeStyle = `rgba(91,155,213,${(1-dist/120)*0.1})`;
+          ctx.lineWidth=1;
+          ctx.beginPath();
+          ctx.moveTo(a.x,a.y);
+          ctx.lineTo(b.x,b.y);
+          ctx.stroke();
+        }
+      }
+    }
+    freeAtoms.forEach(n=>{
+      ctx.beginPath();
+      ctx.arc(n.x,n.y,n.r,0,Math.PI*2);
+      let alpha = 0.5;
+      if(hoverPoint){
+        const dx = n.x - hoverPoint.x, dy = n.y - hoverPoint.y;
+        const dist = Math.sqrt(dx*dx+dy*dy);
+        if(dist < 160) alpha = 0.5 + (1 - dist/160) * 0.4;
+      }
+      ctx.fillStyle = `rgba(91,155,213,${alpha})`;
+      ctx.fill();
+    });
+
+    requestAnimationFrame(step);
+  }
+  step();
+</script>
+
+</body>
+</html>
