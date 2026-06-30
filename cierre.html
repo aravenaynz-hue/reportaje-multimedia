@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Cierre — ¿Qué se apaga?</title>
+<style>
+  :root{
+    --bg:#070707;
+    --accent:#5b9bd5;
+    --ink:#e9e9e6;
+    --ink-dim: rgba(233,233,230,0.30);
+  }
+
+  *{ box-sizing:border-box; }
+
+  html,body{
+    margin:0; padding:0;
+    background:var(--bg);
+    font-family: Georgia, 'Times New Roman', serif;
+    color:var(--ink);
+    overscroll-behavior:none;
+  }
+
+  .scroll-track{
+    height: 560vh;
+    position: relative;
+  }
+
+  .scene{
+    position: sticky;
+    top:0;
+    height:100vh;
+    width:100%;
+    overflow:hidden;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+
+  .ambient{
+    position:absolute; inset:0;
+    background: radial-gradient(ellipse 60% 50% at 50% 45%, rgba(91,155,213,0.07) 0%, rgba(0,0,0,0) 70%);
+    transition: opacity 1.4s ease;
+  }
+
+  .vignette{
+    position:absolute; inset:0;
+    box-shadow: inset 0 0 18vw 4vw rgba(0,0,0,0.85);
+    pointer-events:none;
+  }
+
+  .darken-overlay{
+    position:absolute; inset:0;
+    background: #000;
+    opacity:0;
+    pointer-events:none;
+    transition: opacity 2.2s ease;
+  }
+
+  .stage{
+    position:relative;
+    width:100%;
+    height:100%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding: 0 8%;
+  }
+
+  /* Pregunta inicial */
+  .question{
+    position:absolute;
+    max-width: 760px;
+    text-align:center;
+    font-size: clamp(1.5rem, 4vw, 2.5rem);
+    font-style: italic;
+    line-height:1.5;
+    color: var(--ink);
+    opacity:0;
+    transition: opacity 1.9s ease;
+  }
+  .question.show{ opacity:1; }
+  .question::after{
+    content:"";
+    display:block;
+    width:42px; height:1px;
+    background:var(--accent);
+    margin:26px auto 0;
+    box-shadow: 0 0 8px rgba(91,155,213,0.5);
+    opacity:0.85;
+  }
+
+  /* Palabras */
+  .word{
+    position:absolute;
+    font-size: clamp(2.4rem, 8vw, 6rem);
+    font-weight:400;
+    letter-spacing: 0.5px;
+    color: var(--ink-dim);
+    opacity:0;
+    text-transform:lowercase;
+    transition: opacity 1.9s ease, color 1.9s ease, letter-spacing 1.9s ease, filter 1.9s ease;
+    text-align:center;
+    filter: blur(0px);
+  }
+
+  .word .underline{
+    display:block;
+    margin: 18px auto 0;
+    height:1px;
+    width:0%;
+    background: var(--accent);
+    box-shadow: 0 0 0px var(--accent);
+    transition: width 1.7s ease, box-shadow 1.7s ease, opacity 1.7s ease;
+    opacity:0;
+  }
+
+  .word.lit{
+    color: var(--ink);
+    letter-spacing: 1.5px;
+  }
+  .word.lit .underline{
+    width:64px;
+    box-shadow: 0 0 10px rgba(91,155,213,0.55);
+    opacity:1;
+  }
+  .word.dim{
+    color: rgba(233,233,230,0.08);
+    filter: blur(0.6px);
+  }
+  .word.dim .underline{
+    width:64px;
+    opacity:0.15;
+    box-shadow:none;
+  }
+
+  /* Frase final */
+  .closing-text{
+    position:absolute;
+    max-width: 720px;
+    text-align:center;
+    padding: 0 4%;
+    opacity:0;
+    transition: opacity 2.4s ease;
+  }
+  .closing-text.show{ opacity:1; }
+  .closing-text p{
+    font-size: clamp(1.1rem, 2.4vw, 1.6rem);
+    line-height:1.7;
+    color:#f1f1ef;
+    letter-spacing:0.2px;
+  }
+  .closing-text p::before{
+    content:"";
+    display:block;
+    width:42px; height:1px;
+    background:var(--accent);
+    margin:0 auto 30px;
+    box-shadow: 0 0 8px rgba(91,155,213,0.5);
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .word, .closing-text, .question, .ambient{ transition:none; }
+  }
+
+  @media (max-width:640px){
+    .word{ font-size: clamp(2.1rem, 9vw, 4rem); }
+    .question{ font-size: clamp(1.25rem, 5.5vw, 2rem); }
+  }
+</style>
+</head>
+<body>
+
+<div class="scroll-track">
+  <div class="scene" id="scene">
+    <div class="ambient" id="ambient"></div>
+    <div class="vignette"></div>
+    <div class="darken-overlay" id="darken"></div>
+
+    <div class="stage">
+      <div class="question" id="question">¿Qué se apaga cuando un investigador deja la ciencia?</div>
+
+      <div class="word" id="w1">experiencia<span class="underline"></span></div>
+      <div class="word" id="w2">proyectos<span class="underline"></span></div>
+      <div class="word" id="w3">formación<span class="underline"></span></div>
+      <div class="word" id="w4">futuro<span class="underline"></span></div>
+
+      <div class="closing-text" id="closing-text">
+        <p>Chile no pierde talento por falta de capacidad.<br>
+        Lo pierde cuando obliga a sus científicos a construir futuro sin estabilidad.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var track = document.querySelector('.scroll-track');
+  var question = document.getElementById('question');
+  var words = [
+    document.getElementById('w1'),
+    document.getElementById('w2'),
+    document.getElementById('w3'),
+    document.getElementById('w4')
+  ];
+  var ambient = document.getElementById('ambient');
+  var darken = document.getElementById('darken');
+  var closingText = document.getElementById('closing-text');
+
+  // Pregunta: aparece, se sostiene más tiempo, se apaga con solapamiento hacia la primera palabra
+  var qRange = [0.00, 0.045, 0.195, 0.24];
+
+  // Cada palabra: [inicioAparicion, picoIluminado, inicioApagado, finApagado]
+  // Sostenimiento (hold) ampliado para que cada palabra permanezca más tiempo antes de apagarse,
+  // con leve solape entre bloques para un cruce fluido.
+  var ranges = [
+    [0.18, 0.22, 0.33, 0.375],
+    [0.335, 0.375, 0.485, 0.53],
+    [0.49, 0.53, 0.64, 0.685],
+    [0.645, 0.685, 0.795, 0.84]
+  ];
+
+  function clamp(v,min,max){ return Math.max(min, Math.min(max, v)); }
+
+  function fadeBlock(p, r){
+    // r = [apareceInicio, apareceFin, mantieneFin, desapareceFin]
+    if(p < r[0]) return 0;
+    if(p < r[1]) return (p - r[0]) / (r[1] - r[0]);
+    if(p < r[2]) return 1;
+    if(p < r[3]) return 1 - (p - r[2]) / (r[3] - r[2]);
+    return 0;
+  }
+
+  function update(){
+    var rect = track.getBoundingClientRect();
+    var total = track.offsetHeight - window.innerHeight;
+    var scrolled = -rect.top;
+    var p = clamp(scrolled / total, 0, 1);
+
+    var qOpacity = fadeBlock(p, qRange);
+    question.style.opacity = qOpacity;
+    question.classList.toggle('show', qOpacity > 0.02);
+
+    words.forEach(function(el, i){
+      var r = ranges[i];
+      el.classList.remove('lit','dim');
+
+      if(p < r[0]){
+        el.style.opacity = 0;
+      } else if(p < r[1]){
+        var t = (p - r[0]) / (r[1] - r[0]);
+        el.style.opacity = t;
+      } else if(p < r[2]){
+        el.style.opacity = 1;
+        el.classList.add('lit');
+      } else if(p < r[3]){
+        var t2 = (p - r[2]) / (r[3] - r[2]);
+        el.style.opacity = 1 - t2*0.85;
+        el.classList.add('dim');
+      } else {
+        el.style.opacity = 0;
+      }
+    });
+
+    var ambientOpacity = 1 - clamp((p - 0.78) / 0.20, 0, 1);
+    ambient.style.opacity = ambientOpacity;
+
+    var darkenOpacity = clamp((p - 0.78) / 0.22, 0, 1) * 0.35;
+    darken.style.opacity = darkenOpacity;
+
+    var textT = clamp((p - 0.92) / 0.10, 0, 1);
+    closingText.classList.toggle('show', textT > 0.02);
+  }
+
+  window.addEventListener('scroll', update, { passive:true });
+  window.addEventListener('resize', update);
+  update();
+})();
+</script>
+
+</body>
+</html>
