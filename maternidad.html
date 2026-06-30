@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Trayectoria científica y maternidad</title>
-
+<link rel="preconnect" href="https://fonts.googleapis.com">
 <style>
 :root{
   --fondo:#0A0A0A;
@@ -23,19 +23,19 @@ html,body{
 }
 
 body{
-  font-family:Georgia,"Times New Roman",serif;
+  font-family: Cambria, "Times New Roman", Times, Georgia, serif;
   color:var(--texto);
 }
 
 .pieza{
   position:relative;
   width:100%;
-  max-width:1100px;
-  height:620px;
+  max-width:1060px;
+  height:560px;
   margin:0 auto;
   background:var(--fondo);
   overflow:hidden;
-  padding:22px 28px 24px;
+  padding:18px 26px 18px;
 }
 
 #fondo{
@@ -58,7 +58,8 @@ body{
 
 .cabecera{
   text-align:center;
-  margin-bottom:6px;
+  margin-bottom:2px;
+  flex:0 0 auto;
 }
 
 .etiqueta{
@@ -73,24 +74,25 @@ body{
 }
 
 h1{
-  font-size:30px;
-  line-height:1.16;
-  margin:0 0 8px;
+  font-size:28px;
+  line-height:1.12;
+  margin:0 0 6px;
   font-weight:600;
 }
 
 .bajada{
-  font-size:16px;
-  line-height:1.42;
+  font-size:15px;
+  line-height:1.34;
   color:var(--texto2);
-  max-width:670px;
+  max-width:690px;
   margin:0 auto;
 }
 
 .escenario{
   position:relative;
-  height:335px;
-  margin-top:10px;
+  height:302px;
+  margin-top:4px;
+  flex:0 0 auto;
 }
 
 svg{
@@ -111,12 +113,12 @@ svg{
 .label{
   position:absolute;
   transform:translate(-50%,-50%);
-  font-size:21px;
+  font-size:19px;
   line-height:1.08;
   font-weight:700;
   text-align:center;
   color:var(--texto2);
-  max-width:170px;
+  max-width:160px;
   text-shadow:0 2px 12px #000;
   transition:color .7s ease,opacity .7s ease;
 }
@@ -126,10 +128,10 @@ svg{
 }
 
 .label.sec{
-  font-size:18px;
+  font-size:16px;
   opacity:0;
   color:var(--texto2);
-  max-width:185px;
+  max-width:175px;
 }
 
 .label.sec.mostrar{
@@ -201,16 +203,17 @@ svg{
 
 .controles{
   text-align:center;
-  margin-top:10px;
+  margin-top:2px;
+  flex:0 0 auto;
 }
 
 button{
-  font-family:Georgia,"Times New Roman",serif;
+  font-family: Cambria, "Times New Roman", Times, Georgia, serif;
   background:transparent;
   color:var(--texto);
   border:1px solid rgba(125,175,234,.38);
-  padding:12px 26px;
-  font-size:16px;
+  padding:11px 24px;
+  font-size:15px;
   cursor:pointer;
   border-radius:2px;
   transition:.3s ease;
@@ -228,17 +231,18 @@ button:disabled{
 }
 
 .frase-final{
-  min-height:70px;
+  min-height:54px;
   text-align:center;
-  margin-top:14px;
-  font-size:24px;
-  line-height:1.35;
+  margin-top:8px;
+  font-size:22px;
+  line-height:1.26;
   opacity:0;
   transition:opacity 1.1s ease;
   color:var(--texto);
   max-width:760px;
   margin-left:auto;
   margin-right:auto;
+  flex:0 0 auto;
 }
 
 .frase-final.visible{
@@ -251,38 +255,72 @@ button:disabled{
 
 @media(max-width:700px){
   .pieza{
-    height:680px;
-    padding:20px 14px 24px;
+    height:610px;
+    padding:16px 12px 16px;
   }
 
-  h1{font-size:24px;}
-  .bajada{font-size:14px;}
-  .etiqueta{font-size:10px;}
+  h1{font-size:22px;}
+  .bajada{font-size:13.5px;line-height:1.32;}
+  .etiqueta{font-size:10px;margin-bottom:8px;}
 
   .escenario{
-    height:390px;
+    height:350px;
+    margin-top:2px;
   }
 
   .label{
-    font-size:15px;
-    max-width:120px;
+    font-size:14px;
+    max-width:112px;
   }
 
   .label.sec{
-    font-size:14px;
-    max-width:130px;
+    font-size:13px;
+    max-width:122px;
   }
 
   button{
-    font-size:14px;
-    padding:11px 18px;
+    font-size:13px;
+    line-height:1.2;
+    padding:10px 14px;
+    max-width:92%;
   }
 
   .frase-final{
-    font-size:20px;
-    min-height:88px;
+    font-size:18px;
+    line-height:1.25;
+    min-height:66px;
+    margin-top:8px;
   }
 }
+
+@media(max-width:430px){
+  .pieza{
+    height:590px;
+  }
+
+  .escenario{
+    height:336px;
+  }
+
+  h1{font-size:20px;}
+  .bajada{font-size:13px;}
+
+  .label{
+    font-size:12.5px;
+    max-width:98px;
+  }
+
+  .label.sec{
+    font-size:12px;
+    max-width:108px;
+  }
+
+  .frase-final{
+    font-size:17px;
+  }
+}
+
+body,h1,.bajada,.label,.etiqueta,.frase-final,button{font-family: Cambria, "Times New Roman", Times, Georgia, serif !important;}
 </style>
 </head>
 
@@ -302,16 +340,16 @@ button:disabled{
     </header>
 
     <section class="escenario">
-      <svg viewBox="0 0 1000 360" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+      <svg viewBox="0 0 1000 330" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
 
         <path id="rutaBase" class="ruta-base"
-        d="M70,160 C180,70 310,70 435,135 C545,190 655,175 750,120 C835,70 900,65 950,90"/>
+        d="M70,150 C180,68 310,68 435,126 C545,178 655,164 750,112 C835,66 900,62 950,86"/>
 
         <path id="rutaBaseActiva" class="ruta-base-activa" pathLength="1"
-        d="M70,160 C180,70 310,70 435,135 C545,190 655,175 750,120 C835,70 900,65 950,90"/>
+        d="M70,150 C180,68 310,68 435,126 C545,178 655,164 750,112 C835,66 900,62 950,86"/>
 
         <path id="rutaMadre" class="ruta-madre"
-        d="M455,145 C485,205 455,250 380,265 C310,280 310,315 390,326 C505,342 640,305 755,260 C830,230 890,225 940,245"/>
+        d="M455,134 C485,188 456,228 383,244 C315,260 312,292 392,301 C505,313 640,282 755,241 C830,214 890,210 940,228"/>
 
         <g id="nodosBase"></g>
         <g id="nodosMadre"></g>
@@ -419,19 +457,19 @@ const lenBase=rutaBase.getTotalLength();
 const lenMadre=rutaMadre.getTotalLength();
 
 const base=[
-  ['Doctorado',.07,120,188],
-  ['Postdoctorado',.28,305,58],
-  ['Primer<br>proyecto',.45,455,104],
-  ['Publicaciones',.70,690,215],
-  ['Carrera<br>consolidada',.94,880,50]
+  ['Doctorado',.07,120,178],
+  ['Postdoctorado',.28,305,54],
+  ['Primer<br>proyecto',.45,458,98],
+  ['Publicaciones',.70,690,198],
+  ['Carrera<br>consolidada',.94,875,52]
 ];
 
 const madre=[
-  ['Maternidad',0,470,190],
-  ['Pausa en<br>laboratorio',.22,410,250],
-  ['Menos datos<br>experimentales',.42,285,308],
-  ['Menos<br>publicaciones',.68,585,315],
-  ['Menor competitividad<br>para fondos',1,850,283]
+  ['Maternidad',0,500,172],
+  ['Pausa en<br>laboratorio',.22,414,228],
+  ['Menos datos<br>experimentales',.42,282,286],
+  ['Menos<br>publicaciones',.68,585,291],
+  ['Menor competitividad<br>para fondos',1,848,258]
 ];
 
 function svgEl(t){
@@ -443,7 +481,7 @@ function addLabel(html,x,y,cls='label'){
   d.className=cls;
   d.innerHTML=html;
   d.style.left=(x/1000*100)+'%';
-  d.style.top=(y/360*100)+'%';
+  d.style.top=(y/330*100)+'%';
   etiquetas.appendChild(d);
   return d;
 }
