@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Testimonio Matías Muñoz</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+
+body{
+background:transparent;
+font-family:Georgia,"Times New Roman",serif;
+color:#fff;
+padding:8px 0;
+}
+
+.player{
+width:100%;
+max-width:980px;
+margin:0 auto;
+display:flex;
+align-items:center;
+gap:18px;
+}
+
+button{
+width:58px;
+height:58px;
+border-radius:50%;
+border:2px solid #fff;
+background:transparent;
+color:#fff;
+font-size:22px;
+cursor:pointer;
+flex-shrink:0;
+display:flex;
+align-items:center;
+justify-content:center;
+padding-left:3px;
+}
+
+.info{flex:1;min-width:0;}
+
+.text{
+font-size:24px;
+line-height:1.28;
+margin-bottom:12px;
+max-width:860px;
+color:#fff;
+}
+
+.wave{
+width:100%;
+height:42px;
+display:flex;
+align-items:flex-end;
+gap:4px;
+}
+
+.wave span{
+flex:1;
+background:#fff;
+border-radius:20px;
+opacity:.95;
+min-width:3px;
+}
+
+.wave span:nth-child(6n+1){height:12px;}
+.wave span:nth-child(6n+2){height:26px;}
+.wave span:nth-child(6n+3){height:42px;}
+.wave span:nth-child(6n+4){height:20px;}
+.wave span:nth-child(6n+5){height:34px;}
+.wave span:nth-child(6n+6){height:16px;}
+
+.playing .wave span{animation:wave .8s ease-in-out infinite;}
+.playing .wave span:nth-child(even){animation-delay:.15s;}
+.playing .wave span:nth-child(3n){animation-delay:.3s;}
+
+@keyframes wave{
+0%,100%{transform:scaleY(.6);}
+50%{transform:scaleY(1.15);}
+}
+
+@media(max-width:700px){
+.player{gap:14px;}
+button{width:48px;height:48px;font-size:18px;}
+.text{font-size:19px;}
+.wave{height:34px;}
+.wave span:nth-child(6n+3){height:34px;}
+}
+</style>
+</head>
+
+<body>
+
+<div class="player" id="player">
+<button id="play" type="button">▶</button>
+
+<div class="info">
+<div class="text">
+¿Qué impacto tiene la incertidumbre en la salud mental<br>
+de quienes hacen ciencia? Escucha el testimonio de Matías Muñoz.
+</div>
+
+<div class="wave">
+<span></span><span></span><span></span><span></span><span></span><span></span>
+<span></span><span></span><span></span><span></span><span></span><span></span>
+<span></span><span></span><span></span><span></span><span></span><span></span>
+<span></span><span></span><span></span><span></span><span></span><span></span>
+<span></span><span></span><span></span><span></span><span></span><span></span>
+<span></span><span></span><span></span><span></span><span></span><span></span>
+<span></span><span></span><span></span><span></span><span></span><span></span>
+<span></span><span></span><span></span><span></span><span></span><span></span>
+</div>
+</div>
+</div>
+
+<audio id="audio" preload="auto">
+<source src="https://res.cloudinary.com/disriewal/video/upload/v1782514818/Cun%CC%83a_Mati%CC%81as_Audio_Mental_ffxmtx.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+const audio = document.getElementById("audio");
+const btn = document.getElementById("play");
+const player = document.getElementById("player");
+
+btn.onclick = () => {
+  if (audio.paused) {
+    audio.play();
+    btn.innerHTML = "❚❚";
+    btn.style.paddingLeft = "0";
+    player.classList.add("playing");
+  } else {
+    audio.pause();
+    btn.innerHTML = "▶";
+    btn.style.paddingLeft = "3px";
+    player.classList.remove("playing");
+  }
+};
+
+audio.onended = () => {
+  btn.innerHTML = "▶";
+  btn.style.paddingLeft = "3px";
+  player.classList.remove("playing");
+};
+</script>
+
+</body>
+</html>
